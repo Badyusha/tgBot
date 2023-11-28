@@ -3,7 +3,7 @@ from telebot import types
 import sqlite3
 from sqlite3 import Error
 
-bot = telebot.TeleBot('6708440193:AAHwhUWSbhwvtKwnU6kHkM8cpNEGfjoyvSQ')
+bot = telebot.TeleBot('6885948940:AAGD89B0_Wjs3BCkyJ7s-0jXuKn7GCWkMZ8')
 
 # здесь обрабатывается /start
 @bot.message_handler(commands=['start'])

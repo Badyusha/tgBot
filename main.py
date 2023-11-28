@@ -1,5 +1,6 @@
 from regToQueue import *
 
+
 surname = ' '
 
 
@@ -11,7 +12,7 @@ def callback_worker(call):
     elif call.data == "on_delete":
         print('тут егор работает')
     else:
-        print('тут даша работает')
+        bot.register_next_step_handler(call.message, DisplayQueue(call.message))
 
 
 bot.polling(none_stop=True, interval=0)

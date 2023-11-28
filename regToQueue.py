@@ -1,5 +1,5 @@
 from botInfo import *
-
+from celj import *
 
 lab_id = 0
 
