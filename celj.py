@@ -86,87 +86,57 @@ def callback_worker(call):
 # Вывод очереди
 
 def DisplayQueue(message):
-    current_time = time.strftime("%H:%M", time.localtime())  # текущее время в формате ЧЧ:ММ
-    users_info = []  # список юзеров сдающих лабу
+    current_time = time.strftime("%H:%M", time.localtime())
+    conn = sqlite3.connect("QueueDatabase.db")
+    cursor = conn.cursor()
     checkLab = {}
+    # Читаем информацию из бд
+    cursor.execute("SELECT * FROM LabTable")
+    lab_data = cursor.fetchall()
 
-    try:
-        connection = sqlite3.connect(r"QueueDatabase.db")
-    except Error as e:
-        bot.send_message(message.chat.id, 'Невозможно подключиться к БД, пните разрабов')
-        return
+    cursor.execute("SELECT * FROM UserTable")
+    user_data = cursor.fetchall()
 
-    # считываем данные бд
-    users = connection.execute(f'SELECT * FROM UserTable')
-    record = connection.execute(f'SELECT * FROM Record')
-    result = connection.execute(f'SELECT * FROM LabTable')
-    record_lab = record.fetchall()
-    users_lab = users.fetchall()
-    lab = result.fetchall()
+    cursor.execute("SELECT * FROM Record")
+    record_data = cursor.fetchall()
 
-    # создание словаря, где хранятся общие данные по ключу сдаваемой лабы
+    # Организовываем данные записей в словарь
     record_dict = {}
-    dictionaryLab = {}
-    for fixation in record_lab:
-        recId = fixation[0]
-        recUserId = fixation[1]
-        recLabId = fixation[2]
-        recLabsCount = fixation[3]
-
-        if recLabId in record_dict:  # проверяем, существует ли уже такой ключ в словаре
-            record_dict[recLabId].append(
-                (recUserId, recLabsCount))  # добавляем значения в существующий список по ключу recLabId
+    for rec_id, rec_user_id, rec_lab_id, rec_labs_count in record_data:
+        if rec_lab_id in record_dict:
+            record_dict[rec_lab_id].append((rec_user_id, rec_labs_count))
         else:
-            record_dict[recLabId] = [(recUserId, recLabsCount)]
+            record_dict[rec_lab_id] = [(rec_user_id, rec_labs_count)]
 
-    # считывание необходимых данных про лабы и вывод
+    # Обработка данных лаб
+    for lab_id, values in record_dict.items():
+        for lab_info in lab_data:
+            if lab_id == lab_info[0] and lab_info[4] < current_time:
+                users_info = [user_info[1] for rec_user_id, rec_labs_count in values for user_info in user_data if
+                              rec_user_id == user_info[0]]
+                lab_key = (lab_info[1], lab_info[2], lab_info[3], lab_info[4])
 
-    for recLabId, values in record_dict.items():  # просмотр словаря с лабами
-        for lr in lab:
-            lab_id = lr[0]
-            lab_name = lr[1]
-            group_number = lr[2]
-            lab_date = lr[3]
-            lab_time = lr[4]
-            if lab_time < current_time:
-                if recLabId == lab_id:  # считываение данных о лабе по ID
-                    for recUserId, recLabsCount in values:
-                        lab_info = f"{lab_name}\t Группа: {group_number}\tДата: {lab_date}"
-
-                        # считываение данных о юзерах по ID
-                        for us in users_lab:
-                            UsId = us[0]
-                            UsSurname = us[1]
-                            if recUserId == UsId:
-                                users_info.append(UsSurname)  # + фамилия в список
-
-                    #проверка есть ли данная очередь в глобал.словаре
-                    if (lab_name, group_number, lab_date, lab_time) in FinishLab:
-                        users_list = FinishLab[(lab_name, group_number, lab_date, lab_time)]
-                    else:
-                        # рандомное распредедение
-                        unique_users_info = list(set(users_info))  # Убираем повторения
-                        random.shuffle(unique_users_info)  # Перемешиваем
-                        users_list = "\n".join([f"{i + 1}. {surname}" for i, surname in enumerate(unique_users_info)])
-                        FinishLab[(lab_name, group_number, lab_date, lab_time)] = [(users_list)]
-                        users_list = []
-                        users_info = []
-                    # вывод
-                    if lab_info is not None:
-                        key = (lab_name, group_number, lab_date, lab_time)
-                        lab_info = f'{lab_name}  Группа: {group_number}\t Дата: {lab_date}'
-                        users_list = '\n'.join([f'{i + 1}. {user}' for i, user in enumerate(FinishLab[key])])[3:]
-                        # Отправляем сообщение
-                        bot.send_message(chat_id="-4036713338", text=lab_info + '\n' + users_list)
-
-            else:
-                key = (lab_name, group_number, lab_date)
-                if key in checkLab:
-                    break
+                if lab_key in FinishLab:
+                    queue_list = FinishLab[lab_key]
                 else:
-                    checkLab[key] = group_number
-                    message = f"Запись еще не окончена.\n{lab_name}\tГруппа: {group_number}\t {lab_date}"
-                    bot.send_message(chat_id="-4036713338", text=message)
+                    unique_users_info = list(set(users_info))
+                    random.shuffle(unique_users_info)
+                    queue_list = "\n".join([f"{i + 1}. {surname}" for i, surname in enumerate(unique_users_info)])
+                    FinishLab[lab_key] = [queue_list]
+
+                # вывод
+                lab_info_formatted = f'{lab_info[1]}  Группа: {lab_info[2]}\t Дата: {lab_info[3]}\t'
+                #queue_list_formatted = '\n'.join([f'{i + 1}. {user}' for i, user in enumerate(FinishLab[lab_key])])
+                queue_list_formatted = 'n'.join([f'{user}' for user in FinishLab[lab_key]])
+                bot.send_message(chat_id=message.chat.id, text=lab_info_formatted + '\n' + queue_list_formatted)
+            elif lab_info[4] > current_time:
+                key = (lab_info[1], lab_info[2], lab_info[3])
+                if key not in checkLab:
+                    checkLab[key] = None
+                    text = f"Запись еще не окончена.\n{lab_info[1]}\tГруппа: {lab_info[2]}\t {lab_info[3]}"
+                    bot.send_message(chat_id=message.chat.id, text=text)
+    cursor.close()
+    conn.close()
 
 
 def register_to_queue(call):
