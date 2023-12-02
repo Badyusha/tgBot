@@ -49,14 +49,14 @@ def display_queue(call):
 
 
 def show_randomed_users_queue(call, queue):
-    users_queue = """| № |   Фамилия   |  Лаба   | Подгруппа | Кол-во лаб |
-=======================================================
+    users_queue = """| № |   Фамилия   | Лаба  | Подгр. | К-во |
+===========================================
 """
 
     for counter in range(len(queue)):
         users_queue += f"|{(str)(counter + 1):^{3}}" # place
         users_queue += f"|{queue[counter][0]: ^{13}}" # name
-        users_queue += f"|{queue[counter][2]: ^{9}}" # subject
-        users_queue += f"|{queue[counter][3]: ^{11}}" # group
-        users_queue += f"|{queue[counter][1]: ^{12}}|\n" # labs count
+        users_queue += f"|{queue[counter][2]: ^{7}}" # subject
+        users_queue += f"|{queue[counter][3]: ^{8}}" # group
+        users_queue += f"|{queue[counter][1]: ^{6}}|\n" # labs count
     bot.send_message(call.chat.id, '<pre>' + users_queue + '</pre>', parse_mode='html')

@@ -116,13 +116,19 @@ def check_labs_count(message, lab_id):
 def record_into_table(message, labs_count, lab_id):
         try:
             connection = sqlite3.connect(r"QueueDatabase.db")
-        except Error as e:
+        except Error:
             bot.send_message(message.from_user.id, 'Невозможно подключиться к БД, пните разрабов')
             help_func(message)
             return
 
-        connection.execute(f'insert into Record(userId, LabID, LabsCount) values({message.from_user.id},{lab_id},{labs_count});')
+        # if someone desides to click on a button 100500 times
+        # just erase all records with him and current lab id from the table
+        connection.execute(f'delete from Record where UserID = {message.from_user.id} and LabID = {lab_id};')
+        connection.commit()
+
+        connection.execute(f'insert into Record(UserId, LabID, LabsCount) values({message.from_user.id},{lab_id},{labs_count});')
         connection.commit()
         connection.close()
+
         bot.send_message(message.from_user.id, "Вы успешно записаны в очередь!\n")
         help_func(message)

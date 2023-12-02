@@ -47,12 +47,13 @@ def main_menu(message):
 
 @bot.message_handler(commands=['help'])
 def help_func(call):
-    bot.send_message(call.chat.id, 
+
+    bot.send_message(call.chat.id,
                      """Что я могу:
 /help - выведется это сообщение
 /start - только, чтобы зарегаться
 /menu - перейти в главное меню
-                     """)
+                     """, parse_mode='html')
 
 
 def menu(message):
@@ -61,9 +62,11 @@ def menu(message):
     item2 = types.KeyboardButton('Удалиться из очереди')
     item3 = types.KeyboardButton('Вывести список очереди')
 
-    markup.add(item1, item2, item3)
+    markup.add(item1)
+    markup.add(item2)
+    markup.add(item3)
 
-    bot.send_message(message.chat.id, '<pre>Hello! And welcome to the Los Pollos Hermanos family!\nMy name is Gustavo but u can call me SuS\nWhat do u want?</pre>', parse_mode='html', reply_markup=markup)
+    bot.send_message(message.chat.id, '<b>Hello! And welcome to the Los Pollos Hermanos family!\nMy name is Gustavo but u can call me SuSq\nWhat do u want?</b>', parse_mode='html', reply_markup=markup)
     
     # keyboard = types.InlineKeyboardMarkup(); #наша клавиатура
 
