@@ -7,9 +7,9 @@
       "request": "launch",
       "args": [],
       "stopAtEntry": false,
-      "externalConsole": true,
-      "cwd": "d:/training_gym/tgBot",
-      "program": "d:/training_gym/tgBot/build/Debug/outDebug",
+      "externalConsole": false,
+      "cwd": "/mnt/d/training_gym/tgbot",
+      "program": "/mnt/d/training_gym/tgbot/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
