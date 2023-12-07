@@ -23,12 +23,6 @@ def start(message):
 
     if (result.fetchall().__len__() != 0): # if user with this id already exists 
         bot.send_message(message.from_user.id, "Вы уже зареганы!")
-        bot.send_message(message.from_user.id,
-                     """Что я могу:
-/help - выведется это сообщение
-/start - только, чтобы зарегаться
-/menu - перейти в главное меню
-                     """, parse_mode='html')
         return
     bot.send_message(message.from_user.id, "Введите свою фамилию")
     bot.register_next_step_handler(message, get_surname) #следующий шаг – функция get_surname
@@ -90,28 +84,19 @@ def get_surname(message):
         return
     
     bot.send_message(message.from_user.id, "Вы успешно зарегестрированы!")
-    bot.send_message(message.from_user.id,
-                     """Что я могу:
-/help - выведется это сообщение
-/start - только, чтобы зарегаться
-/menu - перейти в главное меню
-                     """, parse_mode='html')
     
 def humanity(call):
     bot.send_message(call.chat.id, 'Некое незримое существо или закон, подобно длани господней парящей над миром...\nПо крайней мере, истинно то, что человек не властен даже над своей волей...')
-    bot.send_message(call.chat.id,
-                     """Что я могу:
-/help - выведется это сообщение
-/start - только, чтобы зарегаться
-/menu - перейти в главное меню
-                     """, parse_mode='html')
     
 def unhandled_text(call):
     bot.send_message(call.chat.id, "Кожаный, мои нейронные связи не в состоянии тебя понять")
-    bot.send_message(call.chat.id,
-                     """Что я могу:
-/help - выведется это сообщение
-/start - только, чтобы зарегаться
-/menu - перейти в главное меню
-                     """, parse_mode='html')
+    
+def fsociety(call):
+    bot.send_message(call.chat.id, """ <pre>
+    ___________ ____  ________________________  __
+   / ____/ ___// __ \/ ____/  _/ ____/_  __/\ \/ /
+  / /_   \__ \/ / / / /    / // __/   / /    \  / 
+ / __/  ___/ / /_/ / /____/ // /___  / /     / /  
+/_/    /____/\____/\____/___/_____/ /_/     /_/   
+</pre>""", parse_mode='html')
 

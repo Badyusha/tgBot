@@ -12,6 +12,8 @@ def text_handler(call):
         display_queue(call)
     elif call.text == 'Что вершит судьбу человечества в этом мире?':
         humanity(call)
+    elif call.text == 'fsociety':
+        fsociety(call)
     else:
         unhandled_text(call)
 
