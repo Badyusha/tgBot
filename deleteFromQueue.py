@@ -15,7 +15,6 @@ def delete_from_queue(call):
 
     if len(labs_list) == 0:
         bot.send_message(call.chat.id, 'Ты шото попутал' ) # no records found
-        help_func(call)
         return
     bot.send_message(call.chat.id, 'Откуда удаляться будем?')
     
@@ -63,5 +62,3 @@ def process_user_input(message):
         bot.send_message(message.chat.id, "Введите целое число.")
     finally:
         connection.close()
-
-    help_func(message)

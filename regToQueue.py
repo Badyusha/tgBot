@@ -56,7 +56,6 @@ def correct_id(message, lab_id):
 
     if len(labs_list) == 0:
         bot.send_message(message.from_user.id, "Ты че-то попутал")
-        help_func(message)
         return
 
     record_user(message, lab_id)
@@ -76,7 +75,6 @@ def record_user(message, lab_id):
 
     if len(records_list) != 0:
         bot.send_message(message.from_user.id, 'Вы уже записаны в очередь!')
-        help_func(message)
         return
 
     labs_data = connection.execute(f'select * from LabTable;')
@@ -84,7 +82,6 @@ def record_user(message, lab_id):
 
     if len(labs_list) == 0:
         bot.send_message(message.from_user.id, 'Нет лаб для записи!')
-        help_func(message)
         return
 
     send_time_res = connection.execute(f'select SendTime from LabTable where ID = {lab_id};')
@@ -94,7 +91,6 @@ def record_user(message, lab_id):
 
     if (int)(send_time[0][0].replace(':', '')) <= (int)(datetime.now().strftime("%H%M")):
         bot.send_message(message.from_user.id, 'Время записи окончено :(')
-        help_func(message)
         return
     
     bot.send_message(message.from_user.id, "Сколько лаб хотите сдать?")
@@ -131,4 +127,3 @@ def record_into_table(message, labs_count, lab_id):
         connection.close()
 
         bot.send_message(message.from_user.id, "Вы успешно записаны в очередь!\n")
-        help_func(message)

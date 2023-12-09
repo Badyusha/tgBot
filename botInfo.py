@@ -89,7 +89,7 @@ def humanity(call):
     bot.send_message(call.chat.id, 'Некое незримое существо или закон, подобно длани господней парящей над миром...\nПо крайней мере, истинно то, что человек не властен даже над своей волей...')
     
 def unhandled_text(call):
-    bot.send_message(call.chat.id, "Кожаный, мои нейронные связи не в состоянии тебя понять")
+    bot.send_message(call.chat.id, "Кожаный, мои нейронные связи не в состоянии обработать твое сообщение...")
     
 def fsociety(call):
     bot.send_message(call.chat.id, """ <pre>
